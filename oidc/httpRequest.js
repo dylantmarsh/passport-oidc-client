@@ -1,7 +1,6 @@
-var promise = require('rsvp');
 var rp = require("request-promise");
 
-var exports = module.exports = {
+exports = module.exports = {
     /**
      * @name _promiseFactory
      * @type DefaultPromiseFactory
@@ -41,6 +40,6 @@ var exports = module.exports = {
             return jsonObject;
         }, function(error){
             return error;
-        }).catch(console.error);;
+        }).catch(console.error);
     }
-}
+};

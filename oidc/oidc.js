@@ -10,7 +10,7 @@ var utility = require('./utility.js');
 var cookies = require('cookies');
 var url = require('url');
 
-function OIDC(req, res, serverSettings) {
+function OidcClient(req, res, serverSettings) {
     var self = this;
     
     // if you don't clone, you end up keeping the request / response state on the server level configuration object.
@@ -43,11 +43,11 @@ function OIDC(req, res, serverSettings) {
     if (!self._settings.response_type) {
         self._settings.response_type = "id_token token";
     }
-};
+}
 
-OIDC.prototype.oidcClient = function () { };
+OidcClient.prototype.oidcClient = function () { };
 
-OIDC.prototype.isOidc = function () {
+OidcClient.prototype.isOidc = function () {
     var self = this;
     
     if (self._settings.response_type) {
@@ -59,7 +59,7 @@ OIDC.prototype.isOidc = function () {
     return false;
 };
 
-OIDC.prototype.isOauth = function () {
+OidcClient.prototype.isOauth = function () {
     var self = this;
     
     if (self._settings.response_type) {
@@ -71,8 +71,8 @@ OIDC.prototype.isOauth = function () {
     return false;
 };
 
-OIDC.prototype.loadMetadataAsync = function () {
-    utility.log("OIDC.loadMetadataAsync");
+OidcClient.prototype.loadMetadataAsync = function () {
+    utility.log("OidcClient.loadMetadataAsync");
     var self = this;
     var settings = self._settings;
 
@@ -93,8 +93,8 @@ OIDC.prototype.loadMetadataAsync = function () {
         });
 };
 
-OIDC.prototype.loadX509SigningKeyAsync = function () {
-    utility.log("OIDC.loadX509SigningKeyAsync");
+OidcClient.prototype.loadX509SigningKeyAsync = function () {
+    utility.log("OidcClient.loadX509SigningKeyAsync");
     var self = this;    
     var settings = self._settings;
 
@@ -134,7 +134,7 @@ OIDC.prototype.loadX509SigningKeyAsync = function () {
 };
 
 OidcClient.prototype.loadUserProfile = function (access_token) {
-    utility.log("OIDC.loadUserProfile");
+    utility.log("OidcClient.loadUserProfile");
     var self = this;
     
     return self.loadMetadataAsync().then(function (metadata) {
@@ -147,8 +147,8 @@ OidcClient.prototype.loadUserProfile = function (access_token) {
     });
 };
 
-OIDC.prototype.loadAuthorizationEndpoint = function () {
-    utility.log("OIDC.loadAuthorizationEndpoint");
+OidcClient.prototype.loadAuthorizationEndpoint = function () {
+    utility.log("OidcClient.loadAuthorizationEndpoint");
     var self = this;
 
     if (self._settings.authorization_endpoint) {
@@ -173,8 +173,8 @@ OIDC.prototype.loadAuthorizationEndpoint = function () {
     });
 };
 
-OIDC.prototype.createTokenRequestAsync = function () {
-    utility.log("OIDC.createTokenRequestAsync");
+OidcClient.prototype.createTokenRequestAsync = function () {
+    utility.log("OidcClient.createTokenRequestAsync");
 
     var self = this;
     var settings = self._settings;
@@ -183,9 +183,10 @@ OIDC.prototype.createTokenRequestAsync = function () {
 
         var state = utility.rand();
         var url = authorization_endpoint + "?state=" + encodeURIComponent(state);
+        var none = null;
 
         if (self.isOidc()) {
-            var nonce = utility.rand();
+            nonce = utility.rand();
             url += "&nonce=" + encodeURIComponent(nonce);
         }
 
@@ -212,7 +213,7 @@ OIDC.prototype.createTokenRequestAsync = function () {
         };
 
         if (nonce) {
-            request_state["nonce"] = nonce;
+            request_state.nonce = nonce;
         }
 
         settings.request_state_store.set(settings.request_state_key, JSON.stringify(request_state));
@@ -222,12 +223,12 @@ OIDC.prototype.createTokenRequestAsync = function () {
             url: url
         };
     }, function (error) {
-        return self.error(error);;
+        return self.error(error);
     });
 };
 
-OIDC.prototype.createLogoutRequestAsync = function (id_token_hint) {
-    utility.log("OIDC.createLogoutRequestAsync");
+OidcClient.prototype.createLogoutRequestAsync = function (id_token_hint) {
+    utility.log("OidcClient.createLogoutRequestAsync");
     var self = this;
     var settings = self._settings;
     
@@ -245,8 +246,8 @@ OIDC.prototype.createLogoutRequestAsync = function (id_token_hint) {
     });
 };
 
-OIDC.prototype.validateIdTokenAsync = function (id_token, nonce, access_token) {
-    utility.log("OIDC.validateIdTokenAsync");
+OidcClient.prototype.validateIdTokenAsync = function (id_token, nonce, access_token) {
+    utility.log("OidcClient.validateIdTokenAsync");
 
     var self = this;
     var settings = self._settings;
@@ -302,8 +303,8 @@ OIDC.prototype.validateIdTokenAsync = function (id_token, nonce, access_token) {
     });
 };
 
-OIDC.prototype.validateAccessTokenAsync = function (id_token_contents, access_token) {
-    utility.log("OIDC.validateAccessTokenAsync");
+OidcClient.prototype.validateAccessTokenAsync = function (id_token_contents, access_token) {
+    utility.log("OidcClient.validateAccessTokenAsync");
     var self = this;
     
     if (!id_token_contents.at_hash) {
@@ -321,8 +322,8 @@ OIDC.prototype.validateAccessTokenAsync = function (id_token_contents, access_to
     return promise.resolve();
 };
 
-OIDC.prototype.validateIdTokenAndAccessTokenAsync = function (id_token, nonce, access_token) {
-    utility.log("OIDC.validateIdTokenAndAccessTokenAsync");
+OidcClient.prototype.validateIdTokenAndAccessTokenAsync = function (id_token, nonce, access_token) {
+    utility.log("OidcClient.validateIdTokenAndAccessTokenAsync");
 
     var self = this;
 
@@ -337,7 +338,7 @@ OIDC.prototype.validateIdTokenAndAccessTokenAsync = function (id_token, nonce, a
     });
 };
 
-OIDC.prototype.loadStateCookie = function () {
+OidcClient.prototype.loadStateCookie = function () {
     var self = this;
 
     var requestState = self._settings.request_state_store.get(self._settings.request_state_key);
@@ -346,8 +347,8 @@ OIDC.prototype.loadStateCookie = function () {
     return requestState;
 };
 
-OIDC.prototype.processResponseAsync = function (result, requestState) {
-    utility.log("OIDC.processResponseAsync");
+OidcClient.prototype.processResponseAsync = function (result, requestState) {
+    utility.log("OidcClient.processResponseAsync");
 
     var self = this;
     var settings = self._settings;
@@ -435,23 +436,22 @@ OIDC.prototype.processResponseAsync = function (result, requestState) {
     });
 };
 
-OIDC.prototype.error = function (message) {
+OidcClient.prototype.error = function (message) {
     utility.error(promise, message);
 };
 
 
-OIDC.prototype.mergeRequestOptions = function (req, options) {
+OidcClient.prototype.mergeRequestOptions = function (req, options) {
 
     var self = this;
     var config = self._settings;
     
     function originalURL(req) {
-        var headers = req.headers
-            , protocol = (req.connection.encrypted || req.headers['x-forwarded-proto'] == 'https')
-                ? 'https'
-                : 'http'
-            , host = headers.host
-            , path = req.url || '';
+        var headers = req.headers;
+        var protocol = (req.connection.encrypted || req.headers['x-forwarded-proto'] === 'https') ? 'https' : 'http';
+        var host = headers.host;
+        var path = req.url || '';
+
         return protocol + '://' + host + path;
     }
 
@@ -467,35 +467,35 @@ OIDC.prototype.mergeRequestOptions = function (req, options) {
 
     var params = config;
 
-    params['redirect_uri'] = callbackURL;
+    params.redirect_uri = callbackURL;
 
     if (options.response_mode || config.response_mode) {
-        params['response_mode'] = options.response_mode || config.response_mode;
+        params.response_mode. = options.response_mode || config.response_mode;
     }
 
-    params['response_type'] = options.response_type || config.response_type;
+    params.response_type = options.response_type || config.response_type;
 
     if (options.prompt) {
-        params['prompt'] = options.prompt;
+        params.prompt = options.prompt;
     }
     if (options.display) {
-        params['display'] = options.display;
+        params.display = options.display;
     }
     if (options.login_hint) {
-        params['login_hint'] = options.login_hint;
+        params.login_hint = options.login_hint;
     }
     if (options.accessType) {
-        params['access_type'] = options.accessType;
+        params.access_type = options.accessType;
     }
     if (options.openidRealm) {
-        params['openid.realm'] = options.openidRealm;
+        params.openid.realm = options.openidRealm;
     }
     if (options.hd) {
-        params['hd'] = options.hd;
+        params.hd = options.hd;
     }
 
     if (options.acr_values) {
-        params['acr_values'] = options.acr_values;
+        params.acr_values = options.acr_values;
     }
 
     var scope = options.scope || config.scope;
@@ -513,4 +513,4 @@ OIDC.prototype.mergeRequestOptions = function (req, options) {
     self._settings = params;
 };
     
-module.exports = OIDC;
+module.exports = OidcClient;

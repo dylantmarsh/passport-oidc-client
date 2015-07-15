@@ -1,12 +1,13 @@
 'use strict';
 var httpRequest = require('./httpRequest.js');
 
-var exports = module.exports = {
+exports = module.exports = {
     environment: process.env.NODE_ENV || 'LOCAL',
 
     log: function(message) {
-        if(this.environment === 'LOCAL')
+        if(this.environment === 'LOCAL') {
             console.log(message);
+        }
     },
 
     copy: function(obj, target) {
