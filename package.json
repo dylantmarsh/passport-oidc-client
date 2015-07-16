@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "passport-strategy": "^1.0.0",
-    "oidc-client": "https://github.com/edwinf/oidc-client.git"
+    "oidc-client-node": "https://github.com/edwinf/oidc-client-node/tarball/master"
   }
 }
