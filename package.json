@@ -1,5 +1,5 @@
 {
-  "name": "passport-oidc",
+  "name": "passport-oidc-client",
   "version": "1.0.0",
   "description": "Passport strategy for OpenID Connect consumers",
   "keywords": [
