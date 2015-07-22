@@ -3,6 +3,7 @@ example/
 
 # Node.js
 node_modules/
+!node_modules/oidc-client-node
 npm-debug.log
 
 # WebStorm IDE
