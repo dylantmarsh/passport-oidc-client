@@ -1,6 +1,6 @@
 {
   "name": "passport-oidc-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Passport strategy for OpenID Connect consumers",
   "keywords": [
     "passport",
@@ -20,7 +20,7 @@
     "url": "https://github.com/dylantmarsh/passport-oidc/issues"
   },
   "dependencies": {
-    "passport-strategy": "^1.0.0",
-    "oidc-client-node": "https://github.com/edwinf/oidc-client-node/tarball/master"
+    "oidc-client-node": "^1.0.1",
+    "passport-strategy": "^1.0.0"
   }
 }
